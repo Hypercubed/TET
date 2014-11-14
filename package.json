@@ -1,0 +1,81 @@
+{
+  "name": "tet3",
+  "private": "true",
+  "version": "0.6.2",
+  "description": "FANTOM5 Table Extraction Tool",
+  "homepage": "http://fantom.gsc.riken.jp/5/tet/",
+  "keywords": [
+    "FANTOM",
+    "FANTOM5",
+    "DPI",
+    "Expression",
+    "TPM",
+    "Counts",
+    "Samples",
+    "Tables",
+    "Viewer"
+  ],
+  "author": "J. Harshbarger <jayson@gsc.riken.jp>",
+  "maintainers": [
+    "J. Harshbarger <jayson@gsc.riken.jp>"
+  ],
+  "contributors": [
+    "J. Harshbarger <jayson@gsc.riken.jp>"
+  ],
+  "bugs": {
+    "url": "mailto:jayson@gsc.riken.jp"
+  },
+  "dependencies": {
+    "express": "~3.4.8",
+    "debug": "~0.8.1",
+    "ejs": "~1.0.0",
+    "safe-regex": "0.0.1",
+    "byline": "~4.1.1",
+    "stream-transform": "0.0.2"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-autoprefixer": "~0.4.0",
+    "grunt-bower-install": "~1.0.0",
+    "grunt-concurrent": "~0.5.0",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-connect": "^0.7.1",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-cssmin": "~0.7.0",
+    "grunt-contrib-htmlmin": "~0.1.3",
+    "grunt-contrib-imagemin": "~0.3.0",
+    "grunt-contrib-jshint": "~0.7.1",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-watch": "~0.5.2",
+    "grunt-google-cdn": "~0.2.0",
+    "grunt-newer": "~0.6.1",
+    "grunt-ngmin": "~0.0.2",
+    "grunt-rev": "~0.1.0",
+    "grunt-svgmin": "~0.2.0",
+    "grunt-usemin": "~2.0.0",
+    "jshint-stylish": "~0.1.3",
+    "load-grunt-tasks": "~0.4.0",
+    "time-grunt": "~0.2.1",
+    "karma-ng-scenario": "^0.1.0",
+    "grunt-karma": "^0.8.3",
+    "karma": "^0.12.16",
+    "karma-ng-html2js-preprocessor": "^0.1.0",
+    "connect-livereload": "^0.4.0",
+    "grunt-express-server": "^0.4.17",
+    "grunt-open": "^0.2.3",
+    "grunt-simple-mocha": "^0.4.0",
+    "assemble": "^0.4.37",
+    "karma-jasmine": "^0.1.5",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "chai": "^1.9.1",
+    "grunt-bump": "0.0.16"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  }
+}

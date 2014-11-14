@@ -1,0 +1,37 @@
+{
+  "name": "tet3",
+  "version": "0.6.2",
+  "dependencies": {
+    "angular": "1.2.15",
+    "json3": "~3.2.6",
+    "es5-shim": "~2.1.0",
+    "jquery": "~1.11.0",
+    "bootstrap": "~3.0.3",
+    "angular-route": "1.2.15",
+    "d3": "~3.3.11",
+    "angular-ui-select2": "~0.0.4",
+    "angular-loading-bar": "~0.1.0",
+    "intro.js": "~0.6.0",
+    "angular-animate": "~1.2.4",
+    "angular-cookies": "~1.2.16",
+    "angular-resource": "~1.2.16",
+    "angular-sanitize": "~1.2.16",
+    "isteven-angular-multiselect": "~1.1.0",
+    "angular-dsv": "Hypercubed/angular-dsv#~0.0.3"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.2.15",
+    "angular-scenario": "1.2.15"
+  },
+  "resolutions": {
+    "angular": "1.2.16"
+  },
+  "overrides": {
+    "isteven-angular-multiselect": {
+      "main": [
+        "angular-multi-select.js",
+        "angular-multi-select.css"
+      ]
+    }
+  }
+}

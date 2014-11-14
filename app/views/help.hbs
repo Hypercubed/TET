@@ -1,0 +1,37 @@
+<div class="jumbotron masthead">
+  <div class="container">
+    <h1 id="title">Help using Table Extraction Tool</h1>
+  </div>
+</div>
+
+<div class="container">
+{{#markdown}}
+### Instructions
+1. Select a dataset/file from the FANTOM5 data.
+2. Select specific columns of the dataset you wish to extract
+    * The list of columns will be populated based on the dataset/file selection.
+    * Select columns from the drop-down list or by typing a column name (it will auto-complete for fast retrieval of the desired column(s)).
+    * The order of columns selected does not matter. The returned columns order will match that of the source file.
+3. Enter search term(s) for retrieving specific rows from the source table.
+  * Leave blank to retrieve all the rows. *(warning: result may be a large file)*
+  * Search will be accross all columns by default; including columns not selected in step two.
+  * Search terms are based on partial string matching (e.g. the first column of expression dataset corresponds to the CAGE cluster ids, typing `chr1` in the search term box will retrieve all the CAGE clusters on chromosome 1, chromosome 10 or chromosome 11 and  `chr1:` will match all clusters on chromosome 1).
+  * Regular expressions are allowed (e.g. `chr[1-3]:` will return peaks on chr1, chr2, and chr3).
+      > `^ (Caret)       =  match expression at the start of a line, as in ^A.`
+      > `\ (Back Slash)  =  turn off the special meaning of the next character, as in \+.`
+      > `[ ] (Brackets)  =  match any one of the enclosed characters, as in [aeiou]. Use Hyphen "-" for a range, as in [0-9].`
+      > `[^ ]            =  match any one character except those enclosed in [ ], as in [^0-9].`
+      > `. (Period)      =  match a single character of any value, except end of line.`
+      > `* (Asterisk)    =  match zero or more of the preceding character or expression.`
+      > `+ (Plus)        =  matches one or more of the preceding character or expression.`
+  * Because regular expressions are allowed; periods ( `.` ) and plus sign ( `+` ), which are commonly used in CAGE cluster ids, carry a special meaning and must be protected by a backslash ( `\` ) (e.g.  `chr10.*,\+` returns all chromosome 10 clusters on the plus strand).
+  * You can search within a specific column by providing a regular expression such as `^([^\t]*\t){n}` where `n` is the zero based column index you want to perform the search into. e.g. `^([^\t]*\t){2}chr10` will search for chr10 in column 2 (the third column in the source file).
+  * Multiple search terms may be added as one search term per line or delimited by white spaces or pipes ( `|` ) (note this creates am OR search, AND are implemented using regular expressions) (e.g. `chr1: chr2:` will return peaks on chromosomes 1 and 2).
+5. Visualizations
+  * Table view will show the query results in a paged table view.
+  * Visualizations are limited to 200 rows at a time.
+4. View or download the tab delimited table for your extracted rows and columns. *(results may take several seconds for large datasets)*
+  * Click 'View Table' to view tab-delimited table within your browser.
+  * Click 'Download Table' to download tab-delimited table as a file.
+{{/markdown}}
+</div>

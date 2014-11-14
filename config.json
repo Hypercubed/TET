@@ -1,0 +1,9 @@
+{
+	"env": "Development",
+	"port": 9779,
+	"base": "/",
+	"UA": "UA-XXXXX-XX",
+	"dataPath": "data_collab",
+	"staticPath": "app",
+	"secret": "1aebbcf1-65cb-4a27-bf6a-a720b479e841"
+}

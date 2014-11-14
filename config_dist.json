@@ -1,0 +1,9 @@
+{
+	"env": "Production",
+	"port": 9779,
+	"base": "/",
+	"UA": "UA-XXXXX-XX",
+	"dataPath": "data",
+	"staticPath": "public",
+	"secret": "3122fe30-80d9-4875-b7f7-fab6dd5a7734"
+}
