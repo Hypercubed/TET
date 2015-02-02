@@ -150,6 +150,10 @@ For more information please contact [J. Harshbarger](jayson@gsc.riken.jp)
 ## Acknowledgments
 This work was supported by a research grant from the Japanese Ministry of Education, Culture, Sports, Science and Technology (MEXT) to the RIKEN Center for Life Science Technologies.
 
+## Reference
+
+Marina Lizio, **Jayson Harshbarger**, et. al., Gateways to the FANTOM5 promoter level mammalian expression atlas. *Genome Biology* 2015, **16**:22
+
 ## License
 
 [MIT License](http://en.wikipedia.org/wiki/MIT_License)
