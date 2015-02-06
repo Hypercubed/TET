@@ -1,6 +1,6 @@
 {
   "name": "tet3",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "dependencies": {
     "angular": "1.2.15",
     "json3": "~3.2.6",
