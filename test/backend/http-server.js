@@ -363,8 +363,13 @@ describe('http server',function() {
     });
 
     describe('should reject unsafe regex', function() {
-      runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '(a+){10}', { statusCode: 403 });
+      runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '(a+){10}', { statusCode: 400 });
     });
+
+    describe('should reject invalid regex', function() {
+      runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '*chr10*', { statusCode: 400 });
+    });
+
 
   });
 

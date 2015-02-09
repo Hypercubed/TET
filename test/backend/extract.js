@@ -21,7 +21,7 @@ var dosPath = path.join(__dirname,'/../../data_collab/');
 describe('extract.js', function() {
   'use strict';
 
-  var MockWriteStream = function () {
+  var mockWriteStream = function () {
 
       var ws = stream.Writable();
 
@@ -78,7 +78,7 @@ describe('extract.js', function() {
       params = { pattern: params };
     }
 
-    var ws = MockWriteStream();
+    var ws = mockWriteStream();
     extract.search(filepath, ws, params, fn);
 
   };
@@ -224,7 +224,7 @@ describe('extract.js', function() {
       this.timeout(0);
 
       it('header only', function(done) {
-        this.timeout(10);
+        this.timeout(30);
 
         run('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: '', head: 0}, 1, function(err,data) {
           expect(data.header.split('\t')[0]).to.equal('00Annotation');
@@ -236,7 +236,7 @@ describe('extract.js', function() {
       });
 
       it('early results', function(done) {  // Shouldn't search whole file
-        this.timeout(10);
+        this.timeout(30);
 
         run('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chr10:100', head: 10}, 11, function(err,data) {
           expect(data.response[1]).to.be.lt(128);
@@ -271,15 +271,15 @@ describe('extract.js', function() {
       });
 
       it('with skip, late results', function(done) {
-        run('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chrY:98', skip: 2}, [1,184828], done);
+        run('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chrY:98', skip: 2}, 1, done);
       });
 
       it('with head, late results', function(done) {
-        run('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chrY:', head: 100}, [101,184828], done);
+        run('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chrY:', head: 100}, 101, done);
       });
 
       it('with head and skip, late results', function(done) {
-        run('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chrY:', head: 100, skip: 50}, [101,184828], done);
+        run('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chrY:', head: 100, skip: 50}, 101, done);
       });
 
       it('entrezgene', function(done) {
@@ -328,7 +328,7 @@ describe('extract.js', function() {
       this.timeout(0);
 
       it('header only', function(done) {
-        this.timeout(30);
+        this.timeout(60);
 
         run('hg19.cage_peak_phase1and2combined_tpm_ann_decoded.osc.txt.gz', {pattern: '', head: 0}, 1, function(err,data) {
           expect(data.header.split('\t')[0]).to.equal('00Annotation');
@@ -340,7 +340,7 @@ describe('extract.js', function() {
       });
 
       it('early results', function(done) {  // Shouldn't search whole file
-        this.timeout(10);
+        this.timeout(60);
 
         run('hg19.cage_peak_phase1and2combined_tpm_ann_decoded.osc.txt.gz', {pattern: 'chr10:100', head: 10}, 11, function(err,data) {
           expect(data.response[1]).to.be.lt(128);

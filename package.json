@@ -30,8 +30,7 @@
     "debug": "~0.8.1",
     "ejs": "~1.0.0",
     "safe-regex": "0.0.1",
-    "byline": "~4.1.1",
-    "stream-transform": "0.0.2"
+    "event-stream": "^3.2.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
