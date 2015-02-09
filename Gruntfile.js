@@ -397,7 +397,7 @@ module.exports = function (grunt) {
         push: false
       }
     }
-    
+
   });
 
   grunt.registerTask('setup', [
@@ -449,6 +449,8 @@ module.exports = function (grunt) {
 
     if (build) {
       grunt.config.data.build.config = grunt.file.readJSON('config_'+build+'.json');
+    } else {
+      return grunt.log.writeln('Must specify build.');
     }
 
     return grunt.task.run([
