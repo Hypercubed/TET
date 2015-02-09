@@ -5,7 +5,8 @@
 
 var //path = require('path'),
   http = require('http'),
-  assert = require('assert')
+  assert = require('assert'),
+  zlib = require('zlib')
   ;
 
 var PORT = 9779;
@@ -30,21 +31,34 @@ describe('http server',function() {
     test.head = test.head || defaults.head;
     test.statusCode =  test.statusCode || 200;
     test.skip = test.skip || 0;
+    test.file = test.file || 0;
 
-    var result = { filename: filename };
-    result.lineCount = defaults.skip;
+    var result = {
+      filename: filename,
+      lineCount: defaults.skip
+    };
 
-    http.get({host: 'localhost', port:PORT, path: '/search/?filename='+filename+'&search='+test.pattern+'&head='+test.head+'&skip='+test.skip}, function(res) {
+    var request = http.get({host: 'localhost', port:PORT, path: '/search/?filename='+filename+'&file='+test.file+'&search='+test.pattern+'&head='+test.head+'&skip='+test.skip});
+
+    request.on('response', function(res) {
       result.statusCode = res.statusCode;
 
-      res.on('data', function(body) {
-        result.lineCount += (String(body).match(/\n+/g) || '').length;
-      });
+      function count(data) {
+        var n = data.length;
+        for (var i = 0; i < n; i++) {
+          if (data[i] === 10) {
+            result.lineCount++;
+          }
+        }
+      }
 
-      res.on('end', function() {
-        //done();
-        callback(result);
-      });
+      var reader = (test.file === 0) ? res : res.pipe(zlib.createGunzip());
+
+      reader
+        .on('data', count)
+        .on('end', function() {
+          callback(result);
+        });
 
     });
 
@@ -197,6 +211,10 @@ describe('http server',function() {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', 'chr10:100', 29);
     });
 
+    describe('small file, early results, zipped', function() {
+      runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', {pattern: 'chr10:100', file: 1}, 29);
+    });
+
     describe('small file, with skip, early results', function() {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', {pattern: 'chr10:100', skip: 10}, 19);
     });
@@ -213,12 +231,24 @@ describe('http server',function() {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', 'chr10:1126', 29);
     });
 
+    describe('small file, late results, zipped', function() {
+      runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', {pattern: 'chr10:1126', file: 1}, 29);
+    });
+
     describe('small file, no results', function() {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', 'chrY:98', 1);
     });
 
+    describe('small file, no results, zipped', function() {
+      runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', {pattern: 'chrY:98', file: 1}, 0);  //check why this is zero
+    });
+
     describe('large file, late results', function() {
       runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', 'chrY:98', 3);
+    });
+
+    describe('large file, late results, zipped', function() {
+      runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chrY:98', file: 1}, 3);
     });
 
     describe('large file, with skip, late results', function() {
@@ -235,6 +265,10 @@ describe('http server',function() {
 
     describe('large file, everything', function() {
       runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', '', 184828);
+    });
+
+    describe('large file, everything, zipped', function() {
+      runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: '', file: 1}, 184828);
     });
 
     describe('annotation file, entrezgene', function() {
