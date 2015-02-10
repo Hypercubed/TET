@@ -1,7 +1,7 @@
 {
   "name": "tet3",
   "private": "true",
-  "version": "0.6.3",
+  "version": "0.7.0",
   "description": "FANTOM5 Table Extraction Tool",
   "homepage": "http://fantom.gsc.riken.jp/5/tet/",
   "keywords": [
