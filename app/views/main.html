@@ -39,7 +39,7 @@
         <div class="form-group" data-intro="Select specific columns of the dataset you wish to retrieve. The list of columns will be populated based on the dataset/file selection. Select columns from the drop-down list or by typing a column name.  You can quickly select multiple items from the drop-down list." data-step="2">
           <label class="col-sm-2 control-label" >Column(s)</label>
           <div class="col-sm-10">
-            <div     
+            <div
                 multi-select
                 input-model="columns"
                 button-label="name"
@@ -86,8 +86,8 @@
         <div class="form-group" data-intro="View or download the tab delimited table for your extracted rows and columns. <b>(results may take several seconds for large datasets)</b>" data-step="5">
           <label class="col-sm-2 control-label">Export</label>
           <div class="col-sm-10 btn-group">
-            <button id="view" name="file" ng-disabled="!search.filename" value="0" class="btn btn-success" title="View raw data table in your browser">View data</button>
-            <button id="download" name="file" ng-disabled="!search.filename" value="1" class="btn btn-success" title="Download raw data table to your pc">Download data</button>
+            <!-- button id="view" name="file" ng-disabled="!search.filename" value="0" class="btn btn-success" title="View raw data table in your browser">View data</button -->
+            <button id="download" name="file" ng-disabled="!search.filename" value="1" class="btn btn-success" title="Download raw data table to your PC">Download data</button>
           </div>
         </div>
 
@@ -123,7 +123,7 @@
                 </div>
 
                 <div class="btn-group pull-left">
-                  <button id="view" name="file" ng-disabled="!search.filename" value="0" class="btn btn-success" title="View raw data table in your browser">View data</button>
+                  <!-- button id="view" name="file" ng-disabled="!search.filename" value="0" class="btn btn-success" title="View raw data table in your browser">View data</button -->
                   <button id="download" name="file" ng-disabled="!search.filename" value="1" class="btn btn-success" title="Download raw data table to your pc">Download data</button>
                 </div>
 
