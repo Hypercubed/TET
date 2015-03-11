@@ -1,5 +1,5 @@
 {
-  "name": "tet3",
+  "name": "tet4",
   "private": "true",
   "version": "0.7.0",
   "description": "FANTOM5 Table Extraction Tool",
@@ -15,22 +15,24 @@
     "Tables",
     "Viewer"
   ],
-  "author": "J. Harshbarger <jayson@gsc.riken.jp>",
+  "author": "J. Harshbarger <jayson.harshbarger@riken.jp>",
   "maintainers": [
-    "J. Harshbarger <jayson@gsc.riken.jp>"
+    "J. Harshbarger <jayson.harshbarger@riken.jp>"
   ],
   "contributors": [
-    "J. Harshbarger <jayson@gsc.riken.jp>"
+    "J. Harshbarger <jayson.harshbarger@riken.jp>"
   ],
   "bugs": {
-    "url": "mailto:jayson@gsc.riken.jp"
+    "url": "mailto:jayson.harshbarger@riken.jp"
   },
   "dependencies": {
-    "express": "~3.4.8",
     "debug": "~0.8.1",
     "ejs": "~1.0.0",
+    "event-stream": "~3.2.2",
+    "express": "~3.4.8",
     "safe-regex": "0.0.1",
-    "event-stream": "~3.2.2"
+    "through2": "^0.6.3",
+    "toobusy-js": "^0.4.0"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -75,6 +77,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "start": "node ./lib/server.js"
   }
 }
