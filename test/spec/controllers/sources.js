@@ -4,18 +4,18 @@
 /* global inject */
 /* global it */
 
-describe('Controller: SourcesCtrl', () => {
+describe('Controller: SourcesCtrl', function () {
   'use strict';
 
   // load the controller's module
   beforeEach(module('tetApp'));
 
-  // let SourcesCtrl;
-  let scope;
-  // let $httpBackend;
+  // var SourcesCtrl;
+  var scope;
+  // var $httpBackend;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject((_$httpBackend_, $controller, $rootScope, mockINDEX) => {
+  beforeEach(inject(function (_$httpBackend_, $controller, $rootScope, mockINDEX) {
     // $httpBackend = _$httpBackend_;
 
     // $httpBackend.expectGET(/search\/index.tsv/)
@@ -28,7 +28,7 @@ describe('Controller: SourcesCtrl', () => {
     });
   }));
 
-  it('should attach a list of files to the scope', () => {
+  it('should attach a list of files to the scope', function () {
     // expect(scope.files).toBeUndefined();
     // $httpBackend.flush();
     expect(scope.files.length).toBe(3);

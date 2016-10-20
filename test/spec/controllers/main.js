@@ -4,19 +4,19 @@
 /* global inject */
 /* global it */
 
-describe('Controller: MainCtrl', () => {
+describe('Controller: MainCtrl', function () {
   'use strict';
 
   // load the controller's module
   beforeEach(module('tetApp'));
 
-  // let MainCtrl;
-  let scope;
-  let $httpBackend;
-  // let filename;
+  // var MainCtrl;
+  var scope;
+  var $httpBackend;
+  // var filename;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject((_$httpBackend_, $controller, $rootScope, mockINDEX, mockHEADER) => {
+  beforeEach(inject(function (_$httpBackend_, $controller, $rootScope, mockINDEX, mockHEADER) {
     $httpBackend = _$httpBackend_;
 
     // const filename = mockINDEX[0].filename;
@@ -31,7 +31,7 @@ describe('Controller: MainCtrl', () => {
     });
   }));
 
-  it('should attach a list of files to the scope', () => {
+  it('should attach a list of files to the scope', function () {
     // $httpBackend.flush();
 
     expect(scope.sets.length).toBe(2);
