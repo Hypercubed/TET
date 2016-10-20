@@ -17,6 +17,8 @@ const extract = require('./../../lib/controllers/extract.js');
 
 const dosPath = path.join(__dirname, '/../../data/');
 
+const f5files = require('./fixtures/fantom5-files.json');
+
 describe('extract.js', () => {
   'use strict';
 
@@ -80,46 +82,42 @@ describe('extract.js', () => {
   describe('files', function () {
     this.timeout(0);
 
-    describe('phase 1 files', () => {
-      const tests = [
+    const test = test => {
+      it(test.filename, done => {
+        run(test.filename, '', test.lines, (err, data) => {
+          expect(err).to.equal(null);
+          expect(data.columns).to.equal(test.columns);
+          done();
+        });
+      });
+    };
+
+    for (const key in f5files) { // eslint-disable-line guard-for-in
+      describe(key, () => {
+        f5files[key].forEach(test);
+      });
+    }
+
+    /* describe('phase 1 files', () => {
+      runTests([
         {filename: 'hg19.cage_peak_ann.txt.gz', lines: 1048125, columns: 7},
         {filename: 'hg19.cage_peak_counts_ann_decoded.osc.txt.gz', lines: 184828, columns: 896},
         {filename: 'hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', lines: 184828, columns: 896},
         {filename: 'mm9.cage_peak_ann.txt.gz', lines: 652861, columns: 6},
         {filename: 'mm9.cage_peak_counts_ann_decoded.osc.txt.gz', lines: 116278, columns: 395},
         {filename: 'mm9.cage_peak_tpm_ann_decoded.osc.txt.gz', lines: 116278, columns: 395}
-      ];
-
-      tests.forEach(test => {
-        it(test.filename, done => {
-          run(test.filename, '', test.lines, (err, data) => {
-            expect(err).to.equal(null);
-            expect(data.columns).to.equal(test.columns);
-            done();
-          });
-        });
-      });
+      ]);
     });
 
     describe('TSS files', () => {
-      const tests = [
+      runTests([
         {filename: 'TSS_human.strict.txt.gz', lines: 217573, columns: 2},
         {filename: 'TSS_mouse.strict.txt.gz', lines: 129467, columns: 2}
-      ];
-
-      tests.forEach(test => {
-        it(test.filename, done => {
-          run(test.filename, '', test.lines, (err, data) => {
-            expect(err).to.equal(null);
-            expect(data.columns).to.equal(test.columns);
-            done();
-          });
-        });
-      });
+      ]);
     });
 
     describe('phase 2 files', () => {
-      const tests = [
+      runTests([
         {filename: 'hg19.cage_peak_phase1and2combined_ann.txt.gz', lines: 201803, columns: 7},
         {filename: 'hg19.cage_peak_phase1and2combined_counts_ann_decoded.osc.txt.gz', lines: 201803, columns: 1836},
         {filename: 'hg19.cage_peak_phase1and2combined_tpm_ann_decoded.osc.txt.gz', lines: 201803, columns: 1836},
@@ -129,18 +127,20 @@ describe('extract.js', () => {
         {filename: 'mm9.cage_peak_phase1and2combined_counts_ann_decoded.osc.txt.gz', lines: 158967, columns: 1079},
         {filename: 'mm9.cage_peak_phase1and2combined_tpm_ann_decoded.osc.txt.gz', lines: 158967, columns: 1079},
         {filename: 'mm9.cage_peak_phase1and2combined_rel_expr.txt.gz', lines: 158967, columns: 1074}
-      ];
-
-      tests.forEach(test => {
-        it(test.filename, done => {
-          run(test.filename, '', test.lines, (err, data) => {
-            expect(err).to.equal(null);
-            expect(data.columns).to.equal(test.columns);
-            done();
-          });
-        });
-      });
+      ]);
     });
+
+    describe('reprocessed files', () => {
+      runTests([
+        {filename: 'hg38.cage_peak_phase1and2combined_fair_ann.txt.gz', lines: 201296, columns: 7},
+        {filename: 'hg38.cage_peak_phase1and2combined_fair_counts_ann.osc.txt.gz', lines: 201296, columns: 1836},
+        {filename: 'hg38.cage_peak_phase1and2combined_fair_tpm_ann_fix1.osc.txt.gz', lines: 201296, columns: 1836},
+
+        {filename: 'mm10.cage_peak_phase1and2combined_fair_ann.txt.gz', lines: 158879, columns: 7},
+        {filename: 'mm10.cage_peak_phase1and2combined_fair_counts_ann.osc.txt.gz', lines: 158879, columns: 1080},
+        {filename: 'mm10.cage_peak_phase1and2combined_fair_tpm_ann_fix1.osc.txt.gz', lines: 158879, columns: 1080}
+      ]);
+    }); */
   });
 
   describe('search', () => {

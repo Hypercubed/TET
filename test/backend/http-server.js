@@ -10,6 +10,8 @@ const zlib = require('zlib');
 
 const PORT = 9779;
 
+const f5files = require('./fixtures/fantom5-files.json');
+
 describe('http server', () => {
   'use strict';
 
@@ -100,55 +102,69 @@ describe('http server', () => {
     });
   });
 
-  describe('files', () => {  // TODO: read from index
-    describe('phase 1 files', () => {
-      const tests = [
-        {filename: 'hg19.cage_peak_ann.txt.gz', expected: 1048125},
-        {filename: 'hg19.cage_peak_counts_ann_decoded.osc.txt.gz', expected: 184828},
-        {filename: 'hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', expected: 184828},
+  describe('files', () => {
+    const test = test => {
+      describe(test.filename, () => {
+        runTest(test.filename, test, test.lines);
+      });
+    };
 
-        {filename: 'mm9.cage_peak_ann.txt.gz', expected: 652861},
-        {filename: 'mm9.cage_peak_counts_ann_decoded.osc.txt.gz', expected: 116278},
-        {filename: 'mm9.cage_peak_tpm_ann_decoded.osc.txt.gz', expected: 116278}
-      ];
+    for (const key in f5files) { // eslint-disable-line guard-for-in
+      describe(key, () => {
+        f5files[key].forEach(test);
+      });
+    }
 
+    /* function runTests(tests) {
       tests.forEach(test => {
         describe(test.filename, () => {
-          runTest(test.filename, test, test.expected);
+          runTest(test.filename, test, test.lines);
         });
       });
+    }
+
+    describe('phase 1 files', () => {
+      runTests([
+        {filename: 'hg19.cage_peak_ann.txt.gz', lines: 1048125},
+        {filename: 'hg19.cage_peak_counts_ann_decoded.osc.txt.gz', lines: 184828},
+        {filename: 'hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', lines: 184828},
+
+        {filename: 'mm9.cage_peak_ann.txt.gz', lines: 652861},
+        {filename: 'mm9.cage_peak_counts_ann_decoded.osc.txt.gz', lines: 116278},
+        {filename: 'mm9.cage_peak_tpm_ann_decoded.osc.txt.gz', lines: 116278}
+      ]);
     });
 
     describe('TSS files', () => {
-      const tests = [
-        {filename: 'TSS_human.strict.txt.gz', expected: 217573},
-        {filename: 'TSS_mouse.strict.txt.gz', expected: 129467}
-      ];
-
-      tests.forEach(test => {
-        describe(test.filename, () => {
-          runTest(test.filename, test, test.expected);
-        });
-      });
+      runTests([
+        {filename: 'TSS_human.strict.txt.gz', lines: 217573},
+        {filename: 'TSS_mouse.strict.txt.gz', lines: 129467}
+      ]);
     });
 
     describe('phase 2 files', () => {
-      const tests = [
-        {filename: 'hg19.cage_peak_phase1and2combined_ann.txt.gz', expected: 201803},
-        {filename: 'hg19.cage_peak_phase1and2combined_counts_ann_decoded.osc.txt.gz', expected: 201803},
-        {filename: 'hg19.cage_peak_phase1and2combined_tpm_ann_decoded.osc.txt.gz', expected: 201803},
+      runTests([
+        {filename: 'hg19.cage_peak_phase1and2combined_ann.txt.gz', lines: 201803},
+        {filename: 'hg19.cage_peak_phase1and2combined_counts_ann_decoded.osc.txt.gz', lines: 201803},
+        {filename: 'hg19.cage_peak_phase1and2combined_tpm_ann_decoded.osc.txt.gz', lines: 201803},
 
-        {filename: 'mm9.cage_peak_phase1and2combined_ann.txt.gz', expected: 158967},
-        {filename: 'mm9.cage_peak_phase1and2combined_counts_ann_decoded.osc.txt.gz', expected: 158967},
-        {filename: 'mm9.cage_peak_phase1and2combined_tpm_ann_decoded.osc.txt.gz', expected: 158967}
-      ];
-
-      tests.forEach(test => {
-        describe(test.filename, () => {
-          runTest(test.filename, test, test.expected);
-        });
-      });
+        {filename: 'mm9.cage_peak_phase1and2combined_ann.txt.gz', lines: 158967},
+        {filename: 'mm9.cage_peak_phase1and2combined_counts_ann_decoded.osc.txt.gz', lines: 158967},
+        {filename: 'mm9.cage_peak_phase1and2combined_tpm_ann_decoded.osc.txt.gz', lines: 158967}
+      ]);
     });
+
+    describe('reprocessed files', () => {
+      runTests([
+        {filename: 'hg38.cage_peak_phase1and2combined_fair_ann.txt.gz', lines: 201296, columns: 7},
+        {filename: 'hg38.cage_peak_phase1and2combined_fair_counts_ann.osc.txt.gz', lines: 201296, columns: 1836},
+        {filename: 'hg38.cage_peak_phase1and2combined_fair_tpm_ann_fix1.osc.txt.gz', lines: 201296, columns: 1836},
+
+        {filename: 'mm10.cage_peak_phase1and2combined_fair_ann.txt.gz', lines: 158879, columns: 7},
+        {filename: 'mm10.cage_peak_phase1and2combined_fair_counts_ann.osc.txt.gz', lines: 158879, columns: 1080},
+        {filename: 'mm10.cage_peak_phase1and2combined_fair_tpm_ann_fix1.osc.txt.gz', lines: 158879, columns: 1080}
+      ]);
+    }); */
   });
 
   describe('concurrent server calls', () => {
