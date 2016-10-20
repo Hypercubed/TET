@@ -1,15 +1,15 @@
-(function(angular) {
+/* global angular */
+
+(function (angular) {
   'use strict';
 
   var indexResolve = {
-      index: ['dsv', function(dsv) {
-
-        return dsv.tsv.get('data/index.tsv').then(function(res) {
-          return res.data;
-        });
-
-      }]
-    };
+    index: ['dsv', function (dsv) {
+      return dsv.tsv.get('data/index.tsv').then(function (res) {
+        return res.data;
+      });
+    }]
+  };
 
   var searchRoute = {
     templateUrl: 'views/main.html',
@@ -30,7 +30,7 @@
         .when('/sources', {
           templateUrl: 'views/sources.html',
           controller: 'SourcesCtrl',
-          resolve: indexResolve,
+          resolve: indexResolve
         })
         .otherwise({
           redirectTo: '/search'
@@ -38,10 +38,9 @@
 
       $locationProvider.html5Mode(false).hashPrefix('!');
     }]);
-    
-  //angular.module('tetApp')
+
+  // angular.module('tetApp')
   //  .config(['searchAPIProvider', function (searchAPIProvider) {
   //    searchAPIProvider.baseurl('search');
   //  }]);
-
 })(angular);

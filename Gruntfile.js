@@ -31,21 +31,21 @@ module.exports = function (grunt) {
       },
       js: {
         files: ['<%= build.app %>/scripts/{,*/}*.js'],
-        tasks: ['newer:jshint:all'],
+        tasks: [],
         options: {
           livereload: true
         }
       },
       jsTest: {
         files: ['test/spec/{,*/}*.js'],
-        tasks: ['newer:jshint:test', 'karma']
+        tasks: ['karma']
       },
       styles: {
         files: ['<%= build.app %>/styles/{,*/}*.css'],
         tasks: ['newer:copy:styles', 'autoprefixer']
       },
       hbs: {
-        files: ['<%= build.app %>/{,*/}*.hbs','<%= build.app %>/views/{,*/}*.hbs'],
+        files: ['<%= build.app %>/{,*/}*.hbs', '<%= build.app %>/views/{,*/}*.hbs'],
         tasks: ['newer:assemble:dev']
       },
       gruntfile: {
@@ -71,13 +71,13 @@ module.exports = function (grunt) {
       dev: {
         options: {
           script: './lib/server.js',
-          'node_env': 'development'
+          node_env: 'development' // eslint-disable-line camelcase
         }
       },
       prod: {
         options: {
           script: './lib/server.js',
-          'node_env': 'production'
+          node_env: 'production' // eslint-disable-line camelcase
         }
       }
     },
@@ -85,25 +85,6 @@ module.exports = function (grunt) {
     open: {
       server: {
         url: 'http://localhost:<%= express.options.port %>'
-      }
-    },
-
-    // Make sure code styles are up to par and there are no obvious mistakes
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc',
-        reporter: require('jshint-stylish')
-      },
-      all: [
-        'Gruntfile.js',
-        '<%= build.app %>/scripts/{,*/}*.js',
-        'lib/{,*/}*.js'
-      ],
-      test: {
-        options: {
-          jshintrc: 'test/.jshintrc'
-        },
-        src: ['test/spec/{,*/}*.js', 'test/backend/{,*/}*.js']
       }
     },
 
@@ -190,7 +171,7 @@ module.exports = function (grunt) {
     // The following *-min tasks produce minified files in the dist folder
     cssmin: {
       options: {
-        //root: '<%= build.app %>'
+        // root: '<%= build.app %>'
       }
     },
 
@@ -309,7 +290,7 @@ module.exports = function (grunt) {
           cwd: '<%= build.app %>/bower_components/bootstrap/dist/fonts/',
           dest: '<%= build.dist %>/fonts',
           src: '*'
-        },{
+        }, {
           expand: true,
           cwd: '<%= build.app %>/bower_components/select2/',
           dest: '<%= build.dist %>/styles',
@@ -334,7 +315,7 @@ module.exports = function (grunt) {
       ],
       dist: [
         'copy:styles',
-        'imagemin',
+        // 'imagemin',
         'svgmin'
       ]
     },
@@ -374,10 +355,10 @@ module.exports = function (grunt) {
 
     simplemocha: {
       options: {
-        //globals: ['should'],
+        // globals: ['should'],
         timeout: 3000,
         ignoreLeaks: true,
-        //grep: 'small',
+        // grep: 'small',
         ui: 'bdd',
         reporter: 'spec'
       },
@@ -385,15 +366,15 @@ module.exports = function (grunt) {
         src: ['test/backend/*.js']
       },
       small: {
-        options: { grep: 'small' },
+        options: {grep: 'small'},
         src: ['test/backend/extract.js']
       }
     },
 
     bump: {
       options: {
-        files: ['package.json','bower.json'],
-        commitFiles: ['package.json','bower.json'],
+        files: ['package.json', 'bower.json'],
+        commitFiles: ['package.json', 'bower.json'],
         push: false
       }
     }
@@ -401,26 +382,26 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('setup', [
-      'clean:server',
-      'bowerInstall',
-      'concurrent:server',
-      'assemble:dev',
-      'autoprefixer'
-    ]
+    'clean:server',
+    'bowerInstall',
+    'concurrent:server',
+    'assemble:dev',
+    'autoprefixer'
+  ]
   );
 
-  grunt.registerTask('express-keepalive', 'Keep grunt running', function() {
+  grunt.registerTask('express-keepalive', 'Keep grunt running', function () {
     this.async();
   });
 
-  grunt.registerTask('serve', function (target) {
+  grunt.registerTask('serve', target => {
     if (target === 'dist') {
       return grunt.task.run(['build:dist', 'express:prod', 'express-keepalive']);
     }
 
     grunt.task.run([
       'setup',
-      //'connect:livereload',
+      // 'connect:livereload',
       'express:dev',
       'open',
       'watch'
@@ -431,7 +412,7 @@ module.exports = function (grunt) {
     'clean:server',
     'concurrent:test',
     'autoprefixer',
-    //'connect:test',
+    // 'connect:test',
     'karma'
   ]);
 
@@ -445,10 +426,9 @@ module.exports = function (grunt) {
     'simplemocha:small'
   ]);
 
-  grunt.registerTask('build', '', function(build) {
-
+  grunt.registerTask('build', '', build => {
     if (build) {
-      grunt.config.data.build.config = grunt.file.readJSON('config_'+build+'.json');
+      grunt.config.data.build.config = grunt.file.readJSON('config_' + build + '.json');
     } else {
       return grunt.log.writeln('Must specify build.');
     }
@@ -474,7 +454,7 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('default', [
-    'newer:jshint',
+    // 'newer:jshint',
     'test',
     'build'
   ]);

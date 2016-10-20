@@ -1,0 +1,27 @@
+{
+  "devDependencies": {
+    "xo": "^0.17.0"
+  },
+  "xo": {
+    "esnext": false,
+    "space": 2,
+    "envs": [
+      "browser"
+    ],
+    "rules": {
+      "no-console": "warn",
+      "import/no-extraneous-dependencies": 0,
+      "no-warning-comments": [
+        1,
+        {
+          "terms": [
+            "todo",
+            "fixme",
+            "xxx"
+          ],
+          "location": "start"
+        }
+      ]
+    }
+  }
+}

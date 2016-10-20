@@ -3,327 +3,312 @@
 /* global describe */
 /* global it */
 
-var //path = require('path'),
-  http = require('http'),
-  assert = require('assert'),
-  zlib = require('zlib')
-  ;
+// const path = require('path'),
+const http = require('http');
+const assert = require('assert');
+const zlib = require('zlib');
 
-var PORT = 9779;
+const PORT = 9779;
 
-describe('http server',function() {
+describe('http server', () => {
   'use strict';
 
-  var defaults = {
+  const defaults = {
     pattern: '.',
     head: 1e8,
     skip: 0
   };
 
-  var countLines = function(filename, test, callback) {
-
+  const countLines = function (filename, test, callback) {
     if (typeof test === 'string') {
-      test = { pattern: test };
+      test = {pattern: test};
     }
 
     test.pattern = encodeURIComponent(test.pattern || '.');
     test.name = test.name || test.filename;
     test.head = test.head || defaults.head;
-    test.statusCode =  test.statusCode || 200;
+    test.statusCode = test.statusCode || 200;
     test.skip = test.skip || 0;
     test.file = test.file || 0;
 
-    var result = {
-      filename: filename,
+    const result = {
+      filename,
       lineCount: defaults.skip
     };
 
-    var request = http.get({host: 'localhost', port:PORT, path: '/search/?filename='+filename+'&file='+test.file+'&search='+test.pattern+'&head='+test.head+'&skip='+test.skip});
+    const request = http.get({host: 'localhost', port: PORT, path: '/search/?filename=' + filename + '&file=' + test.file + '&search=' + test.pattern + '&head=' + test.head + '&skip=' + test.skip});
 
-    request.on('response', function(res) {
+    request.on('response', res => {
       result.statusCode = res.statusCode;
 
       function count(data) {
-        var n = data.length;
-        for (var i = 0; i < n; i++) {
+        const n = data.length;
+        for (let i = 0; i < n; i++) {
           if (data[i] === 10) {
             result.lineCount++;
           }
         }
       }
 
-      var reader = (test.file === 0) ? res : res.pipe(zlib.createGunzip());
+      const reader = (test.file === 0) ? res : res.pipe(zlib.createGunzip());
 
       reader
         .on('data', count)
-        .on('end', function() {
+        .on('end', () => {
           callback(result);
         });
-
     });
-
   };
 
-  var runTest = function(filename, params, expected) {
-
+  const runTest = function (filename, params, expected) {
     if (typeof expected === 'number') {
-      expected = { lineCount: expected };
+      expected = {lineCount: expected};
     }
 
-    var result = {};
+    let result = {};
 
-    it('should fetch without error', function(done) {
+    it('should fetch without error', function (done) {
       this.timeout(0);
-      countLines(filename, params, function(r) {
+      countLines(filename, params, r => {
         result = r;
         done();
       });
     });
 
-    it('returns correct status code', function() {
-      assert.equal(result.statusCode,expected.statusCode || 200);
+    it('returns correct status code', () => {
+      assert.equal(result.statusCode, expected.statusCode || 200);
     });
 
-    it('line counts should match', function() {
+    it('line counts should match', () => {
       if (expected.lineCount) {
-        assert.equal(result.lineCount,expected.lineCount);
+        assert.equal(result.lineCount, expected.lineCount);
       }
     });
-
   };
 
-  describe('errors',function() {  // TODO: read from index
-
-    describe('should return 404 on missing file', function() {
-      runTest('missing.gz', '', { statusCode: 404 });
+  describe('errors', () => {  // TODO: read from index
+    describe('should return 404 on missing file', () => {
+      runTest('missing.gz', '', {statusCode: 404});
     });
 
-    describe('should return 403 on forbidden relative path', function() {
-      runTest('../package.json', '', { statusCode: 403 });
+    describe('should return 403 on forbidden relative path', () => {
+      runTest('../package.json', '', {statusCode: 403});
     });
 
-    describe('should return 403 on forbidden absolute path', function() {
-      runTest('/etc/passwd', '', { statusCode: 403 });
+    describe('should return 403 on forbidden absolute path', () => {
+      runTest('/etc/passwd', '', {statusCode: 403});
     });
-
   });
 
-  describe('files',function() {  // TODO: read from index
+  describe('files', () => {  // TODO: read from index
+    describe('phase 1 files', () => {
+      const tests = [
+        {filename: 'hg19.cage_peak_ann.txt.gz', expected: 1048125},
+        {filename: 'hg19.cage_peak_counts_ann_decoded.osc.txt.gz', expected: 184828},
+        {filename: 'hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', expected: 184828},
 
-    describe('phase 1 files', function() {
-      var tests = [
-          { filename: 'hg19.cage_peak_ann.txt.gz', expected: 1048125 },
-          { filename: 'hg19.cage_peak_counts_ann_decoded.osc.txt.gz', expected: 184828 },
-          { filename: 'hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', expected: 184828 },
-
-          { filename: 'mm9.cage_peak_ann.txt.gz', expected: 652861 },
-          { filename: 'mm9.cage_peak_counts_ann_decoded.osc.txt.gz', expected: 116278 },
-          { filename: 'mm9.cage_peak_tpm_ann_decoded.osc.txt.gz', expected: 116278 }
-        ];
-
-      tests.forEach(function(test) {
-        describe(test.filename, function() {
-          runTest(test.filename,test,test.expected);
-        });
-      });
-    });
-
-    describe('TSS files', function() {
-      var tests = [
-          { filename: 'TSS_human.strict.txt.gz', expected: 217573 },
-          { filename: 'TSS_mouse.strict.txt.gz', expected: 129467 }
-        ];
-
-      tests.forEach(function(test) {
-        describe(test.filename, function() {
-          runTest(test.filename,test,test.expected);
-        });
-      });
-    });
-
-    describe('phase 2 files', function() {
-      var tests = [
-        { filename: 'hg19.cage_peak_phase1and2combined_ann.txt.gz', expected: 201803 },
-        { filename: 'hg19.cage_peak_phase1and2combined_counts_ann_decoded.osc.txt.gz', expected: 201803 },
-        { filename: 'hg19.cage_peak_phase1and2combined_tpm_ann_decoded.osc.txt.gz', expected: 201803 },
-
-        { filename: 'mm9.cage_peak_phase1and2combined_ann.txt.gz', expected: 158967 },
-        { filename: 'mm9.cage_peak_phase1and2combined_counts_ann_decoded.osc.txt.gz', expected: 158967 },
-        { filename: 'mm9.cage_peak_phase1and2combined_tpm_ann_decoded.osc.txt.gz', expected: 158967 }
+        {filename: 'mm9.cage_peak_ann.txt.gz', expected: 652861},
+        {filename: 'mm9.cage_peak_counts_ann_decoded.osc.txt.gz', expected: 116278},
+        {filename: 'mm9.cage_peak_tpm_ann_decoded.osc.txt.gz', expected: 116278}
       ];
 
-      tests.forEach(function(test) {
-        describe(test.filename, function() {
-          runTest(test.filename,test,test.expected);
+      tests.forEach(test => {
+        describe(test.filename, () => {
+          runTest(test.filename, test, test.expected);
         });
       });
     });
 
+    describe('TSS files', () => {
+      const tests = [
+        {filename: 'TSS_human.strict.txt.gz', expected: 217573},
+        {filename: 'TSS_mouse.strict.txt.gz', expected: 129467}
+      ];
+
+      tests.forEach(test => {
+        describe(test.filename, () => {
+          runTest(test.filename, test, test.expected);
+        });
+      });
+    });
+
+    describe('phase 2 files', () => {
+      const tests = [
+        {filename: 'hg19.cage_peak_phase1and2combined_ann.txt.gz', expected: 201803},
+        {filename: 'hg19.cage_peak_phase1and2combined_counts_ann_decoded.osc.txt.gz', expected: 201803},
+        {filename: 'hg19.cage_peak_phase1and2combined_tpm_ann_decoded.osc.txt.gz', expected: 201803},
+
+        {filename: 'mm9.cage_peak_phase1and2combined_ann.txt.gz', expected: 158967},
+        {filename: 'mm9.cage_peak_phase1and2combined_counts_ann_decoded.osc.txt.gz', expected: 158967},
+        {filename: 'mm9.cage_peak_phase1and2combined_tpm_ann_decoded.osc.txt.gz', expected: 158967}
+      ];
+
+      tests.forEach(test => {
+        describe(test.filename, () => {
+          runTest(test.filename, test, test.expected);
+        });
+      });
+    });
   });
 
-  describe('concurrent server calls', function() {
-
-    var expectedResults = [];
-    var results = [];
-    var tasks = 2;
+  describe('concurrent server calls', () => {
+    const expectedResults = [];
+    const results = [];
+    let tasks = 2;
 
     it('should run', function (done) {
       this.timeout(0);
 
-      countLines('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', { pattern: 'xxxxx', head: 10 }, function(r) {
+      countLines('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'xxxxx', head: 10}, r => {
         results[0] = r;
         tasks--;
         if (tasks <= 0) {
           done();
         }
       });
-      expectedResults[0] = { lineCount: 1 };
+      expectedResults[0] = {lineCount: 1};
 
-      countLines('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', { pattern: 'MYB', head: 10 }, function(r) {
+      countLines('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'MYB', head: 10}, r => {
         results[1] = r;
         tasks--;
         if (tasks <= 0) {
           done();
         }
       });
-      expectedResults[1] = { lineCount: 11 };
-
+      expectedResults[1] = {lineCount: 11};
     });
 
-    it('returns correct status code', function() {
-      results.forEach(function(r,i) {
-        assert.equal(r.statusCode,expectedResults[i].statusCode || 200);
+    it('returns correct status code', () => {
+      results.forEach((r, i) => {
+        assert.equal(r.statusCode, expectedResults[i].statusCode || 200);
       });
     });
 
-    it('line counts should match', function() {
-      results.forEach(function(r,i) {
-        assert.equal(r.lineCount,expectedResults[i].lineCount);
+    it('line counts should match', () => {
+      results.forEach((r, i) => {
+        assert.equal(r.lineCount, expectedResults[i].lineCount);
       });
     });
-
   });
 
-
-  describe('search',function() {  // TODO: test returned results
-
-    describe('small file, early results', function() {
+  describe('search', () => {  // TODO: test returned results
+    describe('small file, early results', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', 'chr10:100', 29);
     });
 
-    describe('small file, early results, zipped', function() {
+    describe('small file, early results, zipped', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', {pattern: 'chr10:100', file: 1}, 29);
     });
 
-    describe('small file, with skip, early results', function() {
+    describe('small file, with skip, early results', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', {pattern: 'chr10:100', skip: 10}, 19);
     });
 
-    describe('small file, with head, early results', function() {
+    describe('small file, with head, early results', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', {pattern: 'chr10:100', head: 10}, 11);
     });
 
-    describe('small file, with head and skip, early results', function() {
+    describe('small file, with head and skip, early results', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', {pattern: 'chr10:100', head: 10, skip: 10}, 11);
     });
 
-    describe('small file, late results', function() {
+    describe('small file, late results', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', 'chr10:1126', 29);
     });
 
-    describe('small file, late results, zipped', function() {
+    describe('small file, late results, zipped', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', {pattern: 'chr10:1126', file: 1}, 29);
     });
 
-    describe('small file, no results', function() {
+    describe('small file, no results', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', 'chrY:98', 1);
     });
 
-    describe('small file, no results, zipped', function() {
-      runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', {pattern: 'chrY:98', file: 1}, 0);  //check why this is zero
+    describe('small file, no results, zipped', () => {
+      runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', {pattern: 'chrY:98', file: 1}, 0);  // check why this is zero
     });
 
-    describe('large file, late results', function() {
+    describe('large file, late results', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', 'chrY:98', 3);
     });
 
-    describe('large file, late results, zipped', function() {
+    describe('large file, late results, zipped', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chrY:98', file: 1}, 3);
     });
 
-    describe('large file, with skip, late results', function() {
+    describe('large file, with skip, late results', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chrY:98', skip: 2}, 1);
     });
 
-    describe('large file, with head, late results', function() {
+    describe('large file, with head, late results', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chrY:', head: 100}, 101);
     });
 
-    describe('large file, with head and skip, late results', function() {
-      runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chrY:', head: 100, skip: 50,}, 101);
+    describe('large file, with head and skip, late results', () => {
+      runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: 'chrY:', head: 100, skip: 50}, 101);
     });
 
-    describe('large file, everything', function() {
+    describe('large file, everything', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', '', 184828);
     });
 
-    describe('large file, everything, zipped', function() {
+    describe('large file, everything, zipped', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', {pattern: '', file: 1}, 184828);
     });
 
-    describe('annotation file, entrezgene', function() {
+    describe('annotation file, entrezgene', () => {
       runTest('hg19.cage_peak_ann.txt.gz', 'entrezgene:', 245515);
     });
 
-    describe('annotation file, entrezgene', function() {
+    describe('annotation file, entrezgene', () => {
       runTest('hg19.cage_peak_ann.txt.gz', 'entrezgene:3257', 7);
     });
 
-    describe('annotation file, gene lower case', function() {
+    describe('annotation file, gene lower case', () => {
       runTest('hg19.cage_peak_ann.txt.gz', 'myb', 17);
     });
 
-    describe('annotation file, gene upper case', function() {
+    describe('annotation file, gene upper case', () => {
       runTest('hg19.cage_peak_ann.txt.gz', 'MYB', 134);
     });
 
-    describe('large file, entrezgene', function() {
+    describe('large file, entrezgene', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', 'entrezgene:3257', 2);
     });
 
-    describe('count file, entrezgene', function() {
+    describe('count file, entrezgene', () => {
       runTest('hg19.cage_peak_counts_ann_decoded.osc.txt.gz', 'entrezgene:3257', 2);
     });
 
-    describe('large file, no results', function() {
+    describe('large file, no results', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded.osc.txt.gz', 'entrezgene:11111', 1);
     });
 
-    //describe('large file, long preamble', function() {
+    // describe('large file, long preamble', () => {
     //  runTest('mm9.robust_phase1_pls_2.tpm.osc.txt.gz', '', 158967);
-    //});
+    // });
 
-    //describe('large file, long preamble, with head', function() {
+    // describe('large file, long preamble, with head', () => {
     //  runTest('mm9.robust_phase1_pls_2.tpm.osc.txt.gz', {pattern: '.', head: 10}, 11);
-    //});
+    // });
 
-    //tests.forEach(runTest);
+    // tests.forEach(runTest);
 
     /* tests.forEach(function(test) {
-      var filename = test.filename;
-      var pattern = test.pattern || '.';
-      var expected = test.expected;
-      var head = test.head || 1e16;
-      var skip = test.skip || 0;
+      const filename = test.filename;
+      const pattern = test.pattern || '.';
+      const expected = test.expected;
+      const head = test.head || 1e16;
+      const skip = test.skip || 0;
 
-      //var gz = (filename.split('.').pop() === 'gz');
-      //var filepath = path.join(dosPath, filename);
-      //var pattern = patterns[i];
+      //const gz = (filename.split('.').pop() === 'gz');
+      //const filepath = path.join(dosPath, filename);
+      //const pattern = patterns[i];
 
-      describe(test.name,function() {
+      describe(test.name,() => {
 
-        describe('http server', function() {
-          var httpCount = 0;
+        describe('http server', () => {
+          const httpCount = 0;
 
           it('should fetch data from server', function (done) {
             this.timeout(0);
@@ -340,7 +325,7 @@ describe('http server',function() {
             });
           });
 
-          it('line counts should match', function() {
+          it('line counts should match', () => {
             assert.equal(expected[0], httpCount);
           });
         });
@@ -348,64 +333,58 @@ describe('http server',function() {
       });
 
     }); */
-
   });
 
-  describe('regex',function() {
-
-    describe('should match string', function() {
+  describe('regex', () => {
+    describe('should match string', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', 'chr10:100', 29);
     });
 
-    describe('should match all on blank', function() {
+    describe('should match all on blank', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '', 999);
     });
 
-    describe('should match with carot', function() {
+    describe('should match with carot', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '^chr10:100', 29);
     });
 
-    describe('should match positive strand', function() {
+    describe('should match positive strand', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '^chr10:100\\S*,\\+', 5);
     });
 
-    describe('should match negitave strand', function() {
+    describe('should match negitave strand', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '^chr10:100\\S*,\\-', 25);
     });
 
-    //describe('should match columns', function() {
+    // describe('should match columns', () => {
     //  countLines({ name: 'should match columns',
     //    filename: 'hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz',
     //    pattern: '^(\\S*\\s){2}.*chr10:100',
     //    expected: [20, 999] });
-    //})
+    // })
 
-    describe('should match columns', function() {
+    describe('should match columns', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '^\\S*\\s.*chr10:100', 20);
     });
 
-    describe('should accept implicit or', function() {
+    describe('should accept implicit or', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '^chr10:1000 ^chr10:1001', 11);
     });
 
-    describe('should accept explicit or', function() {
+    describe('should accept explicit or', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '^chr10:1000|^chr10:1001', 11);
     });
 
-    describe('should accept implicit or', function() {
+    describe('should accept implicit or', () => {
       runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '^chr10:1000\n^chr10:1001', 11);
     });
 
-    describe('should reject unsafe regex', function() {
-      runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '(a+){10}', { statusCode: 400 });
+    describe('should reject unsafe regex', () => {
+      runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '(a+){10}', {statusCode: 400});
     });
 
-    describe('should reject invalid regex', function() {
-      runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '*chr10*', { statusCode: 400 });
+    describe('should reject invalid regex', () => {
+      runTest('hg19.cage_peak_tpm_ann_decoded_head.osc.txt.gz', '*chr10*', {statusCode: 400});
     });
-
-
   });
-
-
 });
